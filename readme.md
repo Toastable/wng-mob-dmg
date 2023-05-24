@@ -16,7 +16,7 @@ determines how many individuals in the Mob are hit.
 Every Icon rolled over the Mob’s Defence means an 
 additional individual in the Mob is hit.*
 
-It does not specify which kind of attack tests are applicable and therefore in the abscence of any clarification from Cubicle 7 this module treats damage dealt by Psychic Abilities
+It does not specify which kind of attack tests are applicable and therefore in the absence of any clarification from Cubicle 7 this module treats damage dealt by Psychic Abilities
 the same as any other attack type such as melee or ranged attacks. While this interpretation of the rules may cause certain notoriously unfair psychic abilities to potentially become more potent that is an
 issue with the game system itself and not with the module as such.
 

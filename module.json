@@ -14,6 +14,9 @@
   "esmodules": [
     "modules/wng-mob-dmg.js"
   ],
+  "url": "https://github.com/Toastable/wng-mob-dmg",
+  "manifest": "https://github.com/Toastable/wng-mob-dmg/v1.0.0/module.json",
+  "readme": "https://raw.githubusercontent.com/Toastable/wng-mob-dmg/v1.0.0/README.md",
   "authors": [
     {
       "name": "Ahhnold",

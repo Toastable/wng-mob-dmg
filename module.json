@@ -1,0 +1,36 @@
+{
+  "id":"wng-mob-dmg",
+  "description": "A module which simplifies calculating damage dealt to mobs in Wrath & Glory",
+  "version": "1.0",
+  "title": "Wrath & Glory Mob Damage",
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json",
+      "flags": {}
+    }
+  ],
+  "esmodules": [
+    "modules/wng-mob-dmg.js"
+  ],
+  "authors": [
+    {
+      "name": "Ahhnold",
+      "flags": {}
+    }
+  ],
+  "compatibility": {
+    "minimum": "10",
+    "verified": "10.291"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "wrath-and-glory",
+        "type": "system",
+        "compatibility": {}
+      }
+    ]
+  }
+}

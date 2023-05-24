@@ -1,0 +1,4 @@
+{
+    "BUTTON.ApplyDamageMob": "Apply Damage to Mob",
+    "NOTE.APPLY_DAMAGE_MOB": "{number} {name} were destroyed"
+}

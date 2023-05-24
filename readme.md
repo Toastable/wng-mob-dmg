@@ -1,8 +1,5 @@
 ## **Wrath and Glory Mob Damage**
 
-This is a Foundry VTT module for the Wrath and Glory game system that will assist the modules Drag Ruler, Terrain Ruler,
-and Enhanced Terrain Layer in colorizing a token's movement range, based on Wrath and Glory's rules.
-
 This is a Foundry VTT module for the Wrath and Glory game system that will assist GMs in calculating casualties suffered by Mobs when they suffer damage from attacks
 based on Wrath and Glory's rules. See page 324-325 of the Wrath and Glory Core Rulebook for detailed information.
 

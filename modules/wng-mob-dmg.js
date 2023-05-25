@@ -2,7 +2,15 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
     let canApplyMob = li => {
         let msg = game.messages.get(li.attr("data-message-id"));
         let test = msg.getTest();
-        if (test && canvas.tokens.controlled.length > 0)
+
+        if(!test.damageRoll)
+            return false;
+
+        const hasTarget = canvas.tokens.controlled.length > 0;
+        const targetIsMob = hasTarget ? canvas.tokens.controlled[0].actor.mob != undefined : false;
+        const hasRolledDamageDice = test.result.damage.dice.length > 0;
+
+        if (test && hasTarget && targetIsMob && hasRolledDamageDice)
             return test.result.isSuccess;
     };
 
@@ -20,9 +28,6 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
 
 function _dealDamageToMob(test, target) {
     let promise;
-
-    if (!target || !target.mob)
-        return promise;
 
     const successIcons = test.result.success;
     const testDn = test.result.dn;

@@ -10,9 +10,8 @@ Hooks.on("init", () => {
     });
 });
 
+//Adapted from https://github.com/moo-man/WrathAndGlory-FoundryVTT/blob/master/scripts/common/overrides.js 
 Hooks.on("wng-mob-update", (token, actor) => {
-    debugger;
-
     if (actor && actor.type == "threat" && actor.isMob)
     {
       if (token.mobNumber) 
@@ -65,7 +64,6 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
             let test = game.messages.get(li.attr("data-message-id")).getTest();
             canvas.tokens.controlled.forEach(t => {
                 _dealDamageToMob(test, t.actor);
-                //TO-DO: Trigger re-draw token here
             });
         }
     });
@@ -81,27 +79,6 @@ function _checkIfActorIsMob(token) {
 
 function _checkIfPsychicPowerTest(test) {
     return test.data.context.rollClass === "PowerTest";
-}
-
-function _drawMobNumber(actor) {
-    debugger;
-
-    if (actor && actor.type == "threat" && actor.isMob)
-    {
-      if (token.mobNumber) 
-        token.mobNumber.destroy()
-      token.mobNumber =  new PIXI.Container()
-      let style = token._getTextStyle()
-      style._fontSize = (token.h/token.w * token.h) * 0.25 
-      token.mobNumber.addChild(new PreciseText(actor.mob, style))
-      //this.mobNumber.zIndex = 10
-      token.mobNumber.position.set(token.w-(token.w * 0.3), token.h-(token.h * 0.3))
-      token.addChild(token.mobNumber)
-    }
-    else if (token.mobNumber)
-    {
-        token.mobNumber.destroy() 
-    }
 }
 
 function _dealDamageToMob(test, target) {
@@ -133,12 +110,14 @@ function _dealDamageToMob(test, target) {
     let updateObj = {}
 
     let remainingTargetsInMob = (target.mob - targetsHit);
-    //TODO: Simplify this expression
-    remainingTargetsInMob = remainingTargetsInMob <= 0 ? null : remainingTargetsInMob;
+   
+    if(remainingTargetsInMob <= 0) {
+        remainingTargetsInMob = null;
+    }
 
     updateObj["system.mob"] = remainingTargetsInMob;
 
-    if(remainingTargetsInMob <= 0) {
+    if(!remainingTargetsInMob) {
         updateObj["system.combat.wounds.value"] = target.combat.wounds.max;
         updateObj["system.combat.shock.value"] = target.combat.shock.max;
     }        
@@ -151,11 +130,5 @@ function _dealDamageToMob(test, target) {
         return t.actor.id === target.id
     });
 
-    const result = {
-        type: target.type,
-        isMob: target.isMob,
-        mob: remainingTargetsInMob
-    };
-
-    Hooks.call("wng-mob-update", token, result);
+    Hooks.call("wng-mob-update", token, { type: target.type, isMob: target.isMob, mob: remainingTargetsInMob });
 }

@@ -10,6 +10,27 @@ Hooks.on("init", () => {
     });
 });
 
+Hooks.on("wng-mob-update", (token, actor) => {
+    debugger;
+
+    if (actor && actor.type == "threat" && actor.isMob)
+    {
+      if (token.mobNumber) 
+        token.mobNumber.destroy()
+      token.mobNumber =  new PIXI.Container()
+      let style = token._getTextStyle()
+      style._fontSize = (token.h/token.w * token.h) * 0.25 
+      token.mobNumber.addChild(new PreciseText(actor.mob, style))
+      //this.mobNumber.zIndex = 10
+      token.mobNumber.position.set(token.w-(token.w * 0.3), token.h-(token.h * 0.3))
+      token.addChild(token.mobNumber)
+    }
+    else if (token.mobNumber)
+    {
+        token.mobNumber.destroy() 
+    }
+})
+
 Hooks.on("getChatLogEntryContext", (html, options) => {
     let canApplyMob = li => {
         let msg = game.messages.get(li.attr("data-message-id"));
@@ -62,6 +83,27 @@ function _checkIfPsychicPowerTest(test) {
     return test.data.context.rollClass === "PowerTest";
 }
 
+function _drawMobNumber(actor) {
+    debugger;
+
+    if (actor && actor.type == "threat" && actor.isMob)
+    {
+      if (token.mobNumber) 
+        token.mobNumber.destroy()
+      token.mobNumber =  new PIXI.Container()
+      let style = token._getTextStyle()
+      style._fontSize = (token.h/token.w * token.h) * 0.25 
+      token.mobNumber.addChild(new PreciseText(actor.mob, style))
+      //this.mobNumber.zIndex = 10
+      token.mobNumber.position.set(token.w-(token.w * 0.3), token.h-(token.h * 0.3))
+      token.addChild(token.mobNumber)
+    }
+    else if (token.mobNumber)
+    {
+        token.mobNumber.destroy() 
+    }
+}
+
 function _dealDamageToMob(test, target) {
     const successIcons = test.result.success;
     const targetDef = target.combat.defence.total || 1
@@ -90,16 +132,30 @@ function _dealDamageToMob(test, target) {
 
     let updateObj = {}
 
-    const remainingTargetsInMob = target.mob - targetsHit;
+    let remainingTargetsInMob = (target.mob - targetsHit);
+    //TODO: Simplify this expression
+    remainingTargetsInMob = remainingTargetsInMob <= 0 ? null : remainingTargetsInMob;
 
-    updateObj["data.mob"] = remainingTargetsInMob <= 0 ? null : remainingTargetsInMob;
+    updateObj["system.mob"] = remainingTargetsInMob;
 
     if(remainingTargetsInMob <= 0) {
-        updateObj["data.combat.wounds.value"] = target.combat.wounds.max;
-        updateObj["data.combat.shock.value"] = target.combat.shock.max;
+        updateObj["system.combat.wounds.value"] = target.combat.wounds.max;
+        updateObj["system.combat.shock.value"] = target.combat.shock.max;
     }        
 
     ui.notifications.notify(game.i18n.format("NOTE.APPLY_DAMAGE_MOB", { number: targetsHit, name: target.prototypeToken.name }));
 
     target.update(updateObj);
+
+    const token = canvas.tokens.placeables.find(t => {
+        return t.actor.id === target.id
+    });
+
+    const result = {
+        type: target.type,
+        isMob: target.isMob,
+        mob: remainingTargetsInMob
+    };
+
+    Hooks.call("wng-mob-update", token, result);
 }

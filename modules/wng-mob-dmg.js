@@ -8,6 +8,16 @@ Hooks.on("init", () => {
         default: false,
         requiresReload: true
     });
+
+    game.settings.register('wng-mob-dmg', 'allow-flamer-tests', {
+        name: 'Allow Flamer Weapon Damage',
+        hint: 'Whether or not to allow weapons with the Flamer trait to do damage to Mobs',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: false,
+        requiresReload: true
+    });
 });
 
 //Adapted from https://github.com/moo-man/WrathAndGlory-FoundryVTT/blob/master/scripts/common/overrides.js 
@@ -41,10 +51,16 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
         const isPsychicTest = _checkIfPsychicPowerTest(test);
         const allowPsychicTests = game.settings.get('wng-mob-dmg','allow-psychic-tests');
 
+        const isFlamerTest = _checkIfWeaponIsFlamer(test);
+        const allowFlamerTests = game.settings.get('wng-mob-dmg','allow-flamer-tests');
+
         if(!test.damageRoll)
             return false;
 
         if(isPsychicTest && !allowPsychicTests)
+            return false;
+
+        if(isFlamerTest && !allowFlamerTests)
             return false;
 
         const hasTarget = canvas.tokens.controlled.length > 0;
@@ -89,6 +105,10 @@ function _checkIfDamageDealsMortalWounds(damage) {
     return damage?.other?.mortalWounds?.total || damage?.other?.mortalWounds?.total > 0;
 }
 
+function _checkIfWeaponIsFlamer(test) {
+    return test.item.traits?.some(t => t.name === "flamer");
+}
+
 function _dealDamageToMob(test, target) {
     const successIcons = test.result.success;
     const targetDef = target.combat.defence.total || 1
@@ -109,11 +129,13 @@ function _dealDamageToMob(test, target) {
 
     if(isPsychicTest) {
         if(!test.power.system.multiTarget) {
-            targetsHit = actor.attributes.willpower.total / 2;
+            targetsHit = Math.round(actor.attributes.willpower.total / 2);
         }
     } else if (isGrenadeOrMissile) {
         const blastRating = _getBlastRatingForWeapon(test.item);
         targetsHit = blastRating / 2;
+    } else if(_checkIfWeaponIsFlamer(test)) {
+        targetsHit = Math.round(actor.attributes.agility.total / 2);
     } else {
         const additionalIconsOverDefence = successIcons - targetDef;
 
@@ -136,7 +158,8 @@ function _dealDamageToMob(test, target) {
         updateObj["system.combat.shock.value"] = target.combat.shock.max;
     }        
 
-    ui.notifications.notify(game.i18n.format("NOTE.APPLY_DAMAGE_MOB", { number: targetsHit, name: target.prototypeToken.name }));
+    const notifyMessageFormat = targetsHit > 1 ? "NOTE.APPLY_DAMAGE_MOB" : "NOTE.APPLY_DAMAGE_MOB_SINGLE";
+    ui.notifications.notify(game.i18n.format(notifyMessageFormat, { number: targetsHit, name: target.prototypeToken.name }));
 
     target.update(updateObj);
 

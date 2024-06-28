@@ -94,8 +94,8 @@ function _dealDamageToMob(test, target) {
     const isPsychicTest = _checkIfPsychicPowerTest(test);
     const isGrenadeOrMissile = _checkIfWeaponIsGrenadeOrMissile(test);
     
-    //TO-DO: Account for Mortal Wounds and shock
-    if(targetResilience > test.result.damage.total) {
+    //TO-DO: Account for shock
+    if(test.result.damage.other.mortalWounds.total <= 0 && targetResilience > test.result.damage.total) {
         return;
     }
 

@@ -85,6 +85,10 @@ function _checkIfWeaponIsGrenadeOrMissile(test) {
     return test.item.system.category === "grenade-missile";
 }
 
+function _checkIfDamageDealsMortalWounds(damage) {
+    return damage?.other?.mortalWounds?.total || damage?.other?.mortalWounds?.total > 0;
+}
+
 function _dealDamageToMob(test, target) {
     const successIcons = test.result.success;
     const targetDef = target.combat.defence.total || 1
@@ -95,8 +99,10 @@ function _dealDamageToMob(test, target) {
     const isGrenadeOrMissile = _checkIfWeaponIsGrenadeOrMissile(test);
     
     //TO-DO: Account for shock
-    if(test.result.damage.other.mortalWounds.total <= 0 && targetResilience > test.result.damage.total) {
-        return;
+    if(!_checkIfDamageDealsMortalWounds(test.result.damage)) {
+        if(targetResilience > test.result.damage.total) {
+            return;
+        }
     }
 
     let targetsHit = 1;

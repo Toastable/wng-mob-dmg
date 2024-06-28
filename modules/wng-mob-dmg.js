@@ -69,16 +69,20 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
     });
 });
 
-function _getActorById(actorId) {
-    return game.actors.filter(x => x.id === actorId)[0];
-} 
+function _getBlastRatingForWeapon(item) {
+    return item.traits.filter(t => t.name === "blast")[0].rating;
+}
 
 function _checkIfActorIsMob(token) {
     return token.actor.mob != undefined;
 }
 
 function _checkIfPsychicPowerTest(test) {
-    return test.data.context.rollClass === "PowerTest";
+    return test.context.rollClass === "PowerTest";
+}
+
+function _checkIfWeaponIsGrenadeOrMissile(test) {
+    return test.item.system.category === "grenade-missile";
 }
 
 function _dealDamageToMob(test, target) {
@@ -86,8 +90,9 @@ function _dealDamageToMob(test, target) {
     const targetDef = target.combat.defence.total || 1
     const targetResilience = target.combat.resilience.total || 1;
 
-    const actor = _getActorById(test.data.context.speaker.actor);
+    const actor = test.actor;
     const isPsychicTest = _checkIfPsychicPowerTest(test);
+    const isGrenadeOrMissile = _checkIfWeaponIsGrenadeOrMissile(test);
     
     //TO-DO: Account for Mortal Wounds and shock
     if(targetResilience > test.result.damage.total) {
@@ -100,6 +105,9 @@ function _dealDamageToMob(test, target) {
         if(!test.power.system.multiTarget) {
             targetsHit = actor.attributes.willpower.total / 2;
         }
+    } else if (isGrenadeOrMissile) {
+        const blastRating = _getBlastRatingForWeapon(test.item);
+        targetsHit = blastRating / 2;
     } else {
         const additionalIconsOverDefence = successIcons - targetDef;
 
@@ -127,7 +135,7 @@ function _dealDamageToMob(test, target) {
     target.update(updateObj);
 
     const token = canvas.tokens.placeables.find(t => {
-        return t.actor.id === target.id
+        return t.id === target.token.id
     });
 
     Hooks.call("wng-mob-update", token, { type: target.type, isMob: target.isMob, mob: remainingTargetsInMob });

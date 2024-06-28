@@ -1,7 +1,7 @@
 {
   "id":"wng-mob-dmg",
   "description": "A module which simplifies calculating damage dealt to mobs in Wrath & Glory",
-  "version": "1.2",
+  "version": "1.0.5",
   "title": "Wrath & Glory Mob Damage",
   "languages": [
     {
@@ -15,8 +15,8 @@
     "modules/wng-mob-dmg.js"
   ],
   "url": "https://github.com/Toastable/wng-mob-dmg",
-  "manifest": "https://raw.githubusercontent.com/Toastable/wng-mob-dmg/v1.0.2/module.json",
-  "readme": "https://raw.githubusercontent.com/Toastable/wng-mob-dmg/v1.0.2/README.md",
+  "manifest": "https://raw.githubusercontent.com/Toastable/wng-mob-dmg/v1.0.5/module.json",
+  "readme": "https://raw.githubusercontent.com/Toastable/wng-mob-dmg/v1.0.5/README.md",
   "authors": [
     {
       "name": "Toastable",

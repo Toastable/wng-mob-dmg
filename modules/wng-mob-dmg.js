@@ -106,7 +106,7 @@ function _checkIfDamageDealsMortalWounds(damage) {
 }
 
 function _checkIfWeaponIsFlamer(test) {
-    return test.item.traits?.some(t => t.name === "flamer");
+    return test.item?.traits?.list?.some(t => t.name === "flamer");
 }
 
 function _dealDamageToMob(test, target) {

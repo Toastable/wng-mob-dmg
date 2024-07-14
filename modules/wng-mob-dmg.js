@@ -86,7 +86,7 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
 });
 
 function _getBlastRatingForWeapon(item) {
-    return item.traits.filter(t => t.name === "blast")[0].rating;
+    return item?.traits?.list?.filter(t => t.name === "blast")[0].rating;
 }
 
 function _checkIfActorIsMob(token) {

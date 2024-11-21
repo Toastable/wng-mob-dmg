@@ -20,25 +20,7 @@ Hooks.on("init", () => {
     });
 });
 
-//Adapted from https://github.com/moo-man/WrathAndGlory-FoundryVTT/blob/master/scripts/common/overrides.js 
-Hooks.on("wng-mob-update", (token, actor) => {
-    if (actor && actor.type == "threat" && actor.isMob)
-    {
-      if (token.mobNumber) 
-        token.mobNumber.destroy()
-      token.mobNumber =  new PIXI.Container()
-      let style = token._getTextStyle()
-      style._fontSize = (token.h/token.w * token.h) * 0.25 
-      token.mobNumber.addChild(new PreciseText(actor.mob, style))
-      //this.mobNumber.zIndex = 10
-      token.mobNumber.position.set(token.w-(token.w * 0.3), token.h-(token.h * 0.3))
-      token.addChild(token.mobNumber)
-    }
-    else if (token.mobNumber)
-    {
-        token.mobNumber.destroy() 
-    }
-})
+Hooks.on("refreshToken", (token) => token.drawMobNumber())
 
 Hooks.on("getChatLogEntryContext", (html, options) => {
     let canApplyMob = li => {
@@ -162,10 +144,4 @@ function _dealDamageToMob(test, target) {
     ui.notifications.notify(game.i18n.format(notifyMessageFormat, { number: targetsHit, name: target.prototypeToken.name }));
 
     target.update(updateObj);
-
-    const token = canvas.tokens.placeables.find(t => {
-        return t.id === target.token.id
-    });
-
-    Hooks.call("wng-mob-update", token, { type: target.type, isMob: target.isMob, mob: remainingTargetsInMob });
 }

@@ -33,4 +33,4 @@ and if they hit the module adds a context menu option when right-clicking a weap
 
 ### **Damage dealt with Flamer type weapons**
 
-Just like with Psychic abilities the Wrath and Glory Core Rulebook doesn't definitely state what should happen when mobs are hit with flamer type weapons therefore this module treats flamer type weapons as if they were blast weapons (see 208 of the Core Rulebook) very similarly to how it treats non multi-target Psychic abilities however in this case the Blast Rating is subtituted for the Agility of the attacker. For example an Agility of 4 will cause 2 casualties per mob that is hit.
+Just like with Psychic abilities the Wrath and Glory Core Rulebook doesn't definitely state what should happen when mobs are hit with flamer type weapons therefore this module treats flamer type weapons as if they were blast weapons (see 208 of the Core Rulebook) very similarly to how it treats non multi-target Psychic abilities however in this case the Blast Rating is substituted for the halved, rounded-up Agility of the attacker. For example an Agility of 4 will cause 2 casualties per mob that is hit.

@@ -15,8 +15,8 @@
     "modules/wng-mob-dmg.js"
   ],
   "url": "https://github.com/Toastable/wng-mob-dmg",
-  "manifest": "https://raw.githubusercontent.com/Toastable/wng-mob-dmg/v1.0.5/module.json",
-  "readme": "https://raw.githubusercontent.com/Toastable/wng-mob-dmg/v1.0.5/README.md",
+  "manifest": "https://raw.githubusercontent.com/Toastable/wng-mob-dmg/v1.0.6/module.json",
+  "readme": "https://raw.githubusercontent.com/Toastable/wng-mob-dmg/v1.0.6/README.md",
   "authors": [
     {
       "name": "Toastable",

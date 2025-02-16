@@ -20,19 +20,15 @@ Hooks.on("init", () => {
     });
 });
 
-// Hooks.on("refreshToken", (token) => token.drawMobNumber())
-
 Hooks.on("getChatLogEntryContext", (html, options) => {
     let canApplyMob = li => {
-        let msg = game.messages.get(li.attr("data-message-id"));
-        //do not show menu when right-clicking the test, only the damage
-        //grab the source message id from msg.system.context
-        //use game.messages.get and grab the test using the message id
-        //use that to do the below checks
-        debugger;
-        let test = msg.system.test;
+        const msg = game.messages.get(li.attr("data-message-id"));
 
-        if(!test)
+        const testMsgId = msg.system?.context?.source;
+        const testMsg = game.messages.get(testMsgId);
+        const test = testMsg?.system?.test;
+
+        if(!testMsg)
             return false;
            
         const isPsychicTest = _checkIfPsychicPowerTest(test);
@@ -51,6 +47,7 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
             return false;
 
         const hasTarget = canvas.tokens.controlled.length > 0;
+        //TODO: Change the check for mob so that it uses targetTokens collection on test rather than controlled (selected) canvas tokens?
         const targetIsMob = hasTarget ? _checkIfActorIsMob(canvas.tokens.controlled[0]) : false;
 
         if (hasTarget && targetIsMob) {
@@ -64,11 +61,15 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
         icon: '<i class="fas fa-user-minus"></i>',
         condition: canApplyMob,
         callback: li => {
-            debugger;
-            let test = game.messages.get(li.attr("data-message-id")).system.test;
-            //grab the source message id and do the same as before here and then pass into _dealDamageToMob
+            const msg = game.messages.get(li.attr("data-message-id"));
+            const testMsgId = msg.system?.context?.source;
+            const testMsg = game.messages.get(testMsgId);
+
+            const test = testMsg.system.test;
+            const damageResult = msg.system.result;
+
             canvas.tokens.controlled.forEach(t => {
-                _dealDamageToMob(test, t.actor);
+                _dealDamageToMob(test, damageResult, t.actor);
             });
         }
     });
@@ -87,19 +88,18 @@ function _checkIfPsychicPowerTest(test) {
 }
 
 function _checkIfWeaponIsGrenadeOrMissile(test) {
-    return test.item.system.category === "grenade-missile";
+    return test.item?.system?.category === "grenade-missile";
 }
 
 function _checkIfDamageDealsMortalWounds(damage) {
-    return damage?.other?.mortalWounds?.total || damage?.other?.mortalWounds?.total > 0;
+    return damage?.other?.mortal > 0;
 }
 
 function _checkIfWeaponIsFlamer(test) {
     return test.item?.traits?.list?.some(t => t.name === "flamer");
 }
 
-function _dealDamageToMob(test, target) {
-    debugger;
+function _dealDamageToMob(test, damageResult, target) {
     const successIcons = test.result.success;
     const targetDef = target.combat.defence.total || 1
     const targetResilience = target.combat.resilience.total || 1;
@@ -109,8 +109,8 @@ function _dealDamageToMob(test, target) {
     const isGrenadeOrMissile = _checkIfWeaponIsGrenadeOrMissile(test);
     
     //TO-DO: Account for shock
-    if(!_checkIfDamageDealsMortalWounds(test.result.damage)) {
-        if(targetResilience > test.result.damage.total) {
+    if(!_checkIfDamageDealsMortalWounds(damageResult)) {
+        if(targetResilience > test.result.damage.damage) {
             return;
         }
     }

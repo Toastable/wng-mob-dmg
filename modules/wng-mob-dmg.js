@@ -20,12 +20,17 @@ Hooks.on("init", () => {
     });
 });
 
-Hooks.on("refreshToken", (token) => token.drawMobNumber())
+// Hooks.on("refreshToken", (token) => token.drawMobNumber())
 
 Hooks.on("getChatLogEntryContext", (html, options) => {
     let canApplyMob = li => {
         let msg = game.messages.get(li.attr("data-message-id"));
-        let test = msg.getTest();
+        //do not show menu when right-clicking the test, only the damage
+        //grab the source message id from msg.system.context
+        //use game.messages.get and grab the test using the message id
+        //use that to do the below checks
+        debugger;
+        let test = msg.system.test;
 
         if(!test)
             return false;
@@ -36,7 +41,7 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
         const isFlamerTest = _checkIfWeaponIsFlamer(test);
         const allowFlamerTests = game.settings.get('wng-mob-dmg','allow-flamer-tests');
 
-        if(!test.damageRoll)
+        if(!test.doesDamage)
             return false;
 
         if(isPsychicTest && !allowPsychicTests)
@@ -59,7 +64,9 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
         icon: '<i class="fas fa-user-minus"></i>',
         condition: canApplyMob,
         callback: li => {
-            let test = game.messages.get(li.attr("data-message-id")).getTest();
+            debugger;
+            let test = game.messages.get(li.attr("data-message-id")).system.test;
+            //grab the source message id and do the same as before here and then pass into _dealDamageToMob
             canvas.tokens.controlled.forEach(t => {
                 _dealDamageToMob(test, t.actor);
             });
@@ -76,7 +83,7 @@ function _checkIfActorIsMob(token) {
 }
 
 function _checkIfPsychicPowerTest(test) {
-    return test.context.rollClass === "PowerTest";
+    return test.data.class === "PowerTest";
 }
 
 function _checkIfWeaponIsGrenadeOrMissile(test) {
@@ -92,6 +99,7 @@ function _checkIfWeaponIsFlamer(test) {
 }
 
 function _dealDamageToMob(test, target) {
+    debugger;
     const successIcons = test.result.success;
     const targetDef = target.combat.defence.total || 1
     const targetResilience = target.combat.resilience.total || 1;
